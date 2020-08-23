@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col-6">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <form [formGroup]="form">
+                    <div *ngIf="form.pending && form.touched">checking data ..</div>
+                    <div class="form-group">
+                        <div *ngIf="createOption != 3" class="row">
+                            <div class="col">
+                                <label *ngIf="createOption == 1">Add Student</label>
+                                <label *ngIf="createOption == 2">Add Lecture</label>
+                                <input formControlName="entity" type="text" class="form-control">
+                                <div *ngIf="entity.pending">checking Validation ..</div>
+                                <ul *ngIf="entity.touched && entity.invalid" class="list-group">
+                                    <li class="list-group-item list-group-item-danger" *ngIf="entity.errors.required">Required Field!</li>
+                                    <li class="list-group-item list-group-item-danger" *ngIf="entity.errors.uniqueName">This Name Exist!</li>
+                                    <li class="list-group-item list-group-item-danger" *ngIf="entity.errors.minlength">TooShort</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div *ngIf="createOption == 3" class="row">
+                            <div class="col">
+                                <label>Select Student</label>
+                                <select class="form-control mb-3" formControlName="studentId">
+                                    <option *ngFor="let student of studentsLectures" [value]="student.id">{{ student.name }}</option>
+                                </select>
+                                
+                                <label>Select Lecture</label>
+                                <select class="form-control mb-3" formControlName="lectureId">
+                                    <option *ngFor="let lecture of lectures" [value]="lecture.id">{{ lecture.name }}</option>
+                                </select>
+        
+                                <label>Add Degree</label>
+                                <input class="form-control mb-3" formControlName="degree" type="number">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Type</label>
+                                <select 
+                                formControlName="createOption" class="form-control mb-3">
+                                    <option *ngFor="let type of createList" [value]="type.key">{{ type.value }}</option>
+                                </select>
+                            </div>
+                        </div>                             
+                        <button class="btn btn-primary" [disabled]="form.invalid || !form.touched || form.pending" (click)="submit()">submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="form-group">
+                    <label>Search Student</label>
+                    <input [(ngModel)]="studentGuid" type="text" class="form-control mb-3">
+                    <button (click)="getGrades()" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center" *ngIf="student?.id != null">
+            <div class="col-10">
+                <div class="card">
+                    <div class="card-header">{{ student.name }}</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Lecture</th>
+                                <th scope="col">Degree</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr [class.table-success]="grade.degree >= 50"
+                                  [class.table-danger]="grade.degree < 50"
+                                  *ngFor="let grade of student.grades; let i = index">
+                                <th scope="row">{{ i }}</th>
+                                <td>{{ grade.lectureName }}</td>
+                                <td>{{ grade.degree }}</td>
+                              </tr>    
+                            </tbody>
+                          </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
