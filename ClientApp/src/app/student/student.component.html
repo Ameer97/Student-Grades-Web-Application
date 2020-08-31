@@ -9,7 +9,7 @@
                             <div class="col">
                                 <label *ngIf="createOption == 1">Add Student</label>
                                 <label *ngIf="createOption == 2">Add Lecture</label>
-                                <input formControlName="entity" type="text" class="form-control">
+                                <input (focus)="validate()" formControlName="entity" type="text" class="form-control">
                                 <div *ngIf="entity.pending">checking Validation ..</div>
                                 <ul *ngIf="entity.touched && entity.invalid" class="list-group">
                                     <li class="list-group-item list-group-item-danger" *ngIf="entity.errors.required">Required Field!</li>
@@ -38,7 +38,7 @@
                             <div class="col">
                                 <label>Type</label>
                                 <select 
-                                formControlName="createOption" class="form-control mb-3">
+                                formControlName="createOption" (change)="validate()" class="form-control mb-3">
                                     <option *ngFor="let type of createList" [value]="type.key">{{ type.value }}</option>
                                 </select>
                             </div>

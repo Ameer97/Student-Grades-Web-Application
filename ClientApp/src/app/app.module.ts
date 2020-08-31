@@ -27,9 +27,7 @@ import { StudentComponent } from './student/student.component';
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
+      { path: '', component: StudentComponent },
       { path: 'student', component: StudentComponent },
     ])
   ],

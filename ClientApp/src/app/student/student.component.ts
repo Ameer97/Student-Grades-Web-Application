@@ -38,11 +38,14 @@ export class StudentComponent implements OnInit {
   lectures: Lecture[] = []
   studentsLectures: Student[] = []
 
-  form : FormGroup
+  form: FormGroup
   createList: KeyValue[] = []
 
-  student : Student
+  student: Student
   studentGuid
+
+  generalEntityValidations = [Validators.required, Validators.minLength(3)]
+  studentValidation = [CustomValidators.uniqueName]
 
   constructor(private service: StudentService, private fb: FormBuilder) {
   }
@@ -52,7 +55,8 @@ export class StudentComponent implements OnInit {
     this.getData()
     this.getStudentsLectures()
 
-    this.fillEnumList()    
+    this.fillEnumList()
+    this.validate()
   }
 
   fillEnumList() {
@@ -62,14 +66,23 @@ export class StudentComponent implements OnInit {
       this.createList.push({ key: x[i], value: y[i] })
     }
   }
-  onCreatingForm() {
+  onCreatingForm(createOption : CreateEnum = CreateEnum.Student) {
     this.form = this.fb.group({
-      entity: ['', [Validators.required, Validators.minLength(3)], [CustomValidators.uniqueName]],
+      entity: [],
       studentId: [0, [], []],
       lectureId: [0, [], []],
       degree: [0.0, [], []],
-      createOption: [CreateEnum.Student, [], []],
+      createOption: [createOption, [], []],
     })
+
+  }
+  setStudentValidation() {
+    this.entity.setValidators(this.generalEntityValidations)
+    this.entity.setAsyncValidators(this.studentValidation)
+  }
+
+  setLectureValidation() {
+    this.entity.setValidators(this.generalEntityValidations)
   }
 
   submit() {
@@ -97,17 +110,18 @@ export class StudentComponent implements OnInit {
     let v = this.createOption
     this.onCreatingForm()
     this.form.patchValue({
-      'createOption' : v
+      'createOption': v
     })
   }
 
   createStudents(data: CreateEntity) {
     this.service.createStudents(data).subscribe(response => {
-      let g: Student = response as Student
-      g.grades = []
-      this.studentsLectures.push(g)
+      let student = response as Student
+      student.grades = []
+      this.studentsLectures.push(student)
       console.log("createStudents function")
-      console.log(response as Student)
+      console.log(student)
+      this.pop(CreateEnum.Student, student.guid)
     }, error => {
       console.log(error)
     })
@@ -115,9 +129,11 @@ export class StudentComponent implements OnInit {
 
   createLectures(data: CreateEntity) {
     this.service.createLectures(data).subscribe(response => {
-      this.lectures.push(response as Lecture)
+      let lecture = response as Lecture
+      this.lectures.push(lecture)
       console.log("createLectures function")
-      console.log(response as Lecture)
+      console.log(lecture)
+      this.pop(CreateEnum.Lecture, lecture.name)
     }, error => {
       console.log(error)
     })
@@ -125,11 +141,12 @@ export class StudentComponent implements OnInit {
 
   createGrades(data: CreateGrade) {
     this.service.createGrades(data).subscribe(response => {
-      let r = response as StudentGrades
-      console.log(r)
-      this.studentsLectures.filter(s => s.id == data.studentId)[0].grades.push(r)
+      let grade = response as StudentGrades
+      console.log(grade)
+      this.studentsLectures.filter(s => s.id == data.studentId)[0].grades.push(grade)
       console.log("createGrades function")
       console.log(this.studentsLectures)
+      this.pop(CreateEnum.Grade, grade.Degree)
     })
   }
 
@@ -169,9 +186,43 @@ export class StudentComponent implements OnInit {
     return this.form.get('createOption').value
   }
 
-  getGrades(){
+  getGrades() {
     let x = this.studentsLectures.filter(s => s.guid == this.studentGuid)[0]
     this.student = x
+  }
+
+  pop(type: CreateEnum, value) {
+    let message
+    if (type == CreateEnum.Grade) {
+      message = "grade has assained to: " + value
+      alert(message)
+      return
+    }
+    if (type == CreateEnum.Lecture) {
+      message = "Lecture " + value + " has been Added"
+      alert(message)
+      return
+    }
+    if (type == CreateEnum.Student) {
+      message = "Student with serial: " + value + " has been Added, (important: copy serial to be able to search about him/her)"
+      alert(message)
+      return
+    }
+  }
+
+  validate() {
+    this.onCreatingForm(this.createOption)
+
+    let x = +this.createOption
+    switch (x) {
+      case CreateEnum.Student:
+        this.setStudentValidation()
+        break;
+      case CreateEnum.Lecture:
+        this.setLectureValidation()
+        break;
+
+    }
   }
 }
 

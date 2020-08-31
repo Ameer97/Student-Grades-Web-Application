@@ -24,7 +24,7 @@ export class StudentService {
   
 
   static url = StudentService.develop + "/api/values/"
-  url        = this.develop           + "/api/values/"
+  url = this.develop           + "/api/values/"
 
   private options = {
     headers: new HttpHeaders({
