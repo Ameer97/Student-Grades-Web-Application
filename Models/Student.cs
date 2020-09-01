@@ -9,13 +9,13 @@ namespace Ammar.Models
     public class Student
     {
         public int Id { get; set; }
-        public Guid GuId { get; set; }
+        public string GuId { get; set; }
         public string Name { get; set; }
         public List<Grade> Grades { get; set; }
 
         public Student()
         {
-            this.GuId = Guid.NewGuid();
+            this.GuId = Common.Common.MD5(Guid.NewGuid().ToString());
         }
     }
 }

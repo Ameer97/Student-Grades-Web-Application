@@ -9,7 +9,7 @@ namespace Ammar.Dto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Guid Guid { get; set; }
+        public string Guid { get; set; }
         public List<StudentGrades> Grades { get; set; }
     }
 }
