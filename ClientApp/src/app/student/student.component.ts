@@ -24,7 +24,7 @@ interface Lecture {
 interface StudentGrades {
   gradeId: number
   LectureName: string
-  Degree: number
+  degree: number
   isSuccessed: boolean
 }
 
@@ -146,7 +146,7 @@ export class StudentComponent implements OnInit {
       this.studentsLectures.filter(s => s.id == data.studentId)[0].grades.push(grade)
       console.log("createGrades function")
       console.log(this.studentsLectures)
-      this.pop(CreateEnum.Grade, grade.Degree)
+      this.pop(CreateEnum.Grade, grade.degree)
     })
   }
 
@@ -194,7 +194,7 @@ export class StudentComponent implements OnInit {
   pop(type: CreateEnum, value) {
     let message
     if (type == CreateEnum.Grade) {
-      message = "grade has assained to: " + value
+      message = "grade has assained as: " + value
       alert(message)
       return
     }
