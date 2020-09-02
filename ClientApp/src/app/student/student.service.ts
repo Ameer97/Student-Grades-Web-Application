@@ -48,6 +48,10 @@ export class StudentService {
     return this.http.post(this.url + 'Students', JSON.stringify(data), this.options)
   }
 
+  checkStudent(data: CreateEntity) {
+    return this.http.post(this.url + 'CheckStudent', JSON.stringify(data), this.options)
+  }
+
   createLectures(data: CreateEntity) {
     return this.http.post(this.url + 'Lectures', JSON.stringify(data), this.options)
   }

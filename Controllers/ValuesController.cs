@@ -58,15 +58,32 @@ namespace Ammar.Controllers
         [HttpPost]
         public async Task<IActionResult> Students(CreateDto Input)
         {
-            var x = await _context.Students.AddAsync(new Student {Name = Input.Name});
+            var guid = Guid.NewGuid();
+            var x = await _context.Students.AddAsync(new Student
+            {
+                GuId = Common.Common.MD5(guid.ToString()),
+                Name = Input.Name
+            });
             await _context.SaveChangesAsync();
             var t = new StudentGradesLectures
             {
-                Guid = x.Entity.GuId,
+                Guid = guid.ToString(),
                 Id = x.Entity.Id,
                 Name = x.Entity.Name
             };
             return Ok(t);
+        }
+
+        [HttpPost]
+        public async Task<CreateDto> CheckStudent(CreateDto guidStudent)
+        {
+            var Name = await _context.Students.Where(s => s.GuId == Common.Common.MD5(guidStudent.Name)).Select(s => s.Name).FirstOrDefaultAsync();
+
+            var Result = new CreateDto
+            {
+                Name = Name
+            };
+            return Result;
         }
 
         // POST api/Values/lectures

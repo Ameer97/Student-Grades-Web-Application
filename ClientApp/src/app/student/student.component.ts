@@ -12,7 +12,7 @@ interface KeyValue {
 interface Student {
   id: number
   name: string
-  guid: Guid
+  guid: string
   grades: StudentGrades[]
 }
 
@@ -43,6 +43,7 @@ export class StudentComponent implements OnInit {
 
   student: Student
   studentGuid
+  checkStudentName
 
   generalEntityValidations = [Validators.required, Validators.minLength(3)]
   studentValidation = [CustomValidators.uniqueName]
@@ -66,7 +67,7 @@ export class StudentComponent implements OnInit {
       this.createList.push({ key: x[i], value: y[i] })
     }
   }
-  onCreatingForm(createOption : CreateEnum = CreateEnum.Student) {
+  onCreatingForm(createOption: CreateEnum = CreateEnum.Student) {
     this.form = this.fb.group({
       entity: [],
       studentId: [0, [], []],
@@ -124,6 +125,13 @@ export class StudentComponent implements OnInit {
       this.pop(CreateEnum.Student, student.guid)
     }, error => {
       console.log(error)
+    })
+  }
+
+  checkStudent(data: CreateEntity) {
+    this.service.checkStudent(data).subscribe(response => {
+      let studentName = response as CreateEntity
+      this.checkStudentName = studentName.name
     })
   }
 
@@ -187,8 +195,10 @@ export class StudentComponent implements OnInit {
   }
 
   getGrades() {
-    let x = this.studentsLectures.filter(s => s.guid == this.studentGuid)[0]
-    this.student = x
+    this.service.checkStudent({name: this.studentGuid}).subscribe(response => {
+      let studentName = response as CreateEntity      
+      this.student = this.studentsLectures.filter(s => s.name == studentName.name)[0]
+    })
   }
 
   pop(type: CreateEnum, value) {
